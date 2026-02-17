@@ -1,5 +1,6 @@
 import os
 from flask import Flask, request
+from telegram import Update
 from bot import telegram_app
 
 app = Flask(__name__)
@@ -11,7 +12,10 @@ def home():
 @app.route("/webhook", methods=["POST"])
 async def webhook():
     data = request.get_json(force=True)
-    await telegram_app.process_update(data)
+
+    update = Update.de_json(data, telegram_app.bot)
+    await telegram_app.process_update(update)
+
     return "ok"
 
 if __name__ == "__main__":
